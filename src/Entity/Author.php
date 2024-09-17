@@ -6,6 +6,8 @@ use App\Repository\AuthorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AuthorRepository::class)]
 class Author
@@ -13,12 +15,17 @@ class Author
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getBooks"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Prénom = null;
+    #[Groups(["getBooks"])]
+    #[Assert\NotBlank(message:"Le prenom de l'auteur ne peut être vide")]
+    private ?string $Prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getBooks"])]
+    #[Assert\NotBlank(message:"Le nom de l'auteur ne peut être vide")]
     private ?string $Nom = null;
 
     /**
@@ -39,12 +46,12 @@ class Author
 
     public function getPrenom(): ?string
     {
-        return $this->Prénom;
+        return $this->Prenom;
     }
 
-    public function setPrenom(string $Prénom): static
+    public function setPrenom(string $Prenom): static
     {
-        $this->Prénom = $Prénom;
+        $this->Prenom = $Prenom;
 
         return $this;
     }

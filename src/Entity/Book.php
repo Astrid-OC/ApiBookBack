@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -11,15 +13,24 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getBooks"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getBooks"])]
+    #[Assert\NotBlank(message:"Le titre du livre est obligatoire")]
+    #[Assert\Length(min: 1, max:255, minMessage:"Le titre doit faire au moins {{ limit }} caractères", maxMessage:"Le titre ne peut pas faire plus de {{ limit }} caractères")]
     private ?string $titre = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getBooks"])]
+    #[Assert\NotBlank(message:"Le coverText du livre ne peut être vide")]
     private ?string $coverText = null;
 
     #[ORM\ManyToOne(inversedBy: 'Books')]
+    //Cet ORM permet de faire une suppression en cascade. Les livres seront supprimés en même temps que leur auteur quand on voudra supprimer ce dernier. 
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
+    #[Groups(["getBooks"])]
     private ?Author $author = null;
 
     public function getId(): ?int
