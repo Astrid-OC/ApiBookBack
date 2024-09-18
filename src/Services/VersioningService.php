@@ -2,7 +2,7 @@
 // src\Service\VersioningService.php
 // Création d'un service Symfony pour pouvoir récupérer la version contenue dans le champ "accept" de la requête HTTP.
 
-namespace App\VersioningService;
+namespace App\Services;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
