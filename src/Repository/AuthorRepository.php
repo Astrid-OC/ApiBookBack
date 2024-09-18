@@ -16,6 +16,17 @@ class AuthorRepository extends ServiceEntityRepository
         parent::__construct($registry, Author::class);
     }
 
+    public function findAllWithPagination($page, $limit)
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->setFirstResult(($page - 1)* $limit)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+        $query->setFetchMode(Author::class, "book", \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
+            return $query->getResult();
+    }
+
     //    /**
     //     * @return Author[] Returns an array of Author objects
     //     */

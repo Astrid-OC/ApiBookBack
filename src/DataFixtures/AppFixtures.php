@@ -21,7 +21,7 @@ class AppFixtures extends Fixture
     {  
         //Création d'un user Normal.
         $user = new User();
-        $user->setEmail("user@bookapi");
+        $user->setEmail("user@bookapi.com");
         $user->setRoles(["ROLE_USER"]);
 
         $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
@@ -53,6 +53,7 @@ class AppFixtures extends Fixture
             $livre = new Book;
             $livre->setTitre('Livre' . $i);
             $livre->setCoverText('Quatrième de couverture numéro : ' . $i); 
+            $livre->setComment("Commentaire du bibliothécaire" . $i);
             //On lie le livre à un auteur pris au hasard dans le tableau des auteurs.
             $livre->setAuthor($listAuthor[array_rand($listAuthor)]);
             $manager->persist($livre);
