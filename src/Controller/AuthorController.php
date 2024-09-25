@@ -23,16 +23,24 @@ class AuthorController extends AbstractController
     public function getAuthorList(AuthorRepository $authorRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
         //à la place de page on peut croiser offset
-        $page = $request->get('page', 1);
+        $page = $request->get('page');
         $limit = $request->get('limit', 3);
         $idCache = "getAuthorList-" . $page . "-" . $limit;
 
-        $jsonAuthorList= $cache->get($idCache, function(ItemInterface $item) use ($authorRepository, $page, $limit, $serializer){
-            $item->tag("AuthorCache");
-            $authorList = $authorRepository->findAllWithPagination($page, $limit);
+        if($page)
+        {
+            $jsonAuthorList= $cache->get($idCache, function(ItemInterface $item) use ($authorRepository, $page, $limit, $serializer){
+                $item->tag("AuthorCache");
+                $authorList = $authorRepository->findAllWithPagination($page, $limit);
+                $context = SerializationContext::create()->setGroups(['getBooks']);
+                return $serializer->serialize($authorList, 'json', $context);
+            });
+        }
+        else 
+        {
             $context = SerializationContext::create()->setGroups(['getBooks']);
-            return $serializer->serialize($authorList, 'json', $context);
-        });
+            $jsonAuthorList = $serializer->serialize($authorRepository->findAll(), 'json', $context);
+        }
 
         return new JsonResponse($jsonAuthorList, Response::HTTP_OK, [], true);
     }

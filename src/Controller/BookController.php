@@ -86,7 +86,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book/{id}', name: 'deleteBook', methods:['DELETE'])]
-    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un livre')]
+    // #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un livre')]
     public function deleteBook(Book $book, EntityManagerInterface $em, TagAwareCacheInterface $cache): JsonResponse
     {
         //on peut également utiliser $item->expiresAfter(60) donc le cache dure 60 sec.
@@ -98,7 +98,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book', name:"createBook", methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un livre')]
+    // #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un livre')]
     public function createBook(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, AuthorRepository $authorRepository, ValidatorInterface $validator): JsonResponse 
     {
         $book = $serializer->deserialize($request->getContent(), Book::class, 'json');
@@ -110,14 +110,15 @@ class BookController extends AbstractController
             return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
         }
         
-        $em->persist($book);
-        $em->flush();
         //Récup de l'ensemble des données envoyées sous forme de tableau
         $content = $request->toArray();
         //Récup de l'idAuthor, s'il n'est pas défini, alors on met -1 par défaut.
         $idAuthor = $content['idAuthor'] ?? -1;
         //On cherche l'auteur qui correspond et on l'assigne au livre, si find ne trouve pas, alors null sera retourné.
         $book->setAuthor($authorRepository->find($idAuthor));
+
+        $em->persist($book);
+        $em->flush();
         $context = SerializationContext::create()->setGroups(['getBooks']);
         $jsonBook = $serializer->serialize($book, 'json', $context);
         $location = $urlGenerator->generate('detailBook', ['id' => $book->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
