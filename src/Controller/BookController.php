@@ -127,7 +127,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book/{id}', name:"updateBook", methods: ['PUT'])]
-    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un livre')]
+    // #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un livre')]
     public function updateBook(Request $request, SerializerInterface $serializer, Book $currentBook, EntityManagerInterface $em, AuthorRepository $authorRepository, ValidatorInterface $validator, TagAwareCacheInterface $cache): JsonResponse 
     {
         $updateBook = $serializer->deserialize($request->getContent(), Book::class, 'json');
