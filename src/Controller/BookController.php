@@ -86,7 +86,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book/{id}', name: 'deleteBook', methods:['DELETE'])]
-    // #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un livre')]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un livre')]
     public function deleteBook(Book $book, EntityManagerInterface $em, TagAwareCacheInterface $cache): JsonResponse
     {
         //on peut également utiliser $item->expiresAfter(60) donc le cache dure 60 sec.
@@ -98,7 +98,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book', name:"createBook", methods: ['POST'])]
-    // #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un livre')]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un livre')]
     public function createBook(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, AuthorRepository $authorRepository, ValidatorInterface $validator): JsonResponse 
     {
         $book = $serializer->deserialize($request->getContent(), Book::class, 'json');
@@ -127,7 +127,7 @@ class BookController extends AbstractController
     }
 
     #[Route('/api/book/{id}', name:"updateBook", methods: ['PUT'])]
-    // #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un livre')]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un livre')]
     public function updateBook(Request $request, SerializerInterface $serializer, Book $currentBook, EntityManagerInterface $em, AuthorRepository $authorRepository, ValidatorInterface $validator, TagAwareCacheInterface $cache): JsonResponse 
     {
         $updateBook = $serializer->deserialize($request->getContent(), Book::class, 'json');
