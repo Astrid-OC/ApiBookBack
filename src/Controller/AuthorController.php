@@ -7,6 +7,7 @@ use App\Repository\AuthorRepository;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,6 +55,7 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/api/author/{id}', name: 'deleteAuthor', methods:['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un auteur')]
     public function deleteAuthor(Author $author, EntityManagerInterface $em, TagAwareCacheInterface $cache): JsonResponse
     {
         //on peut également utiliser $item->expiresAfter(60) donc le cache dure 60 sec.
@@ -65,6 +67,7 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/api/author', name:"createAuthor", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un auteur')]
     public function createBook(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse 
     {
         $author = $serializer->deserialize($request->getContent(), Author::class, 'json');
@@ -88,6 +91,7 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/api/author/{id}', name:"updateAuthor", methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un auteur')]
     public function updateAuthor(Request $request, SerializerInterface $serializer, Author $currentAuthor, EntityManagerInterface $em, ValidatorInterface $validator, TagAwareCacheInterface $cache): JsonResponse 
     {
         $updateAuthor = $serializer->deserialize($request->getContent(), Author::class, 'json');
